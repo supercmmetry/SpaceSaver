@@ -13,7 +13,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.deletion.DeletionActivity"></activity>
+        <activity
+            android:name=".ui.commit.CommitActivity"
+            android:parentActivityName=".ui.deletion.DeletionActivity"/>
+        <activity
+            android:name=".ui.deletion.DeletionActivity"
+            android:parentActivityName=".ui.dashboard.MainActivity" />
         <activity
             android:name=".ui.explorer.ExplorerActivity"
             android:parentActivityName=".ui.dashboard.MainActivity" />
@@ -24,6 +29,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name=".utils.GenericFileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
     </application>
 
 </manifest>

@@ -1,8 +1,9 @@
 package com.supercmmetry.spacesaver.data
 
 import java.io.File
+import java.io.Serializable
 
-data class FileFolder(val path: String) {
+data class FileFolder(val path: String) : Serializable {
     var isFile: Boolean = false
         private set
 
@@ -12,13 +13,24 @@ data class FileFolder(val path: String) {
     var name: String = ""
         private set
 
+    var size: Long = 0L
+        private set
+
+    fun getExtension(): String {
+        val splArr = name.split(".")
+        return splArr[splArr.size - 1]
+    }
+
     init {
         isFile = File(path).isFile
         val file = File(path)
         if (!isFile) {
-            inCount = file.walkTopDown().maxDepth(1).toList().size
+            inCount = file.walkTopDown().maxDepth(1).filter { it.isFile }.toList().size
         }
         name = file.name
+        if (isFile) {
+            size = file.length()
+        }
     }
 
     fun getObjects(): List<FileFolder> {

@@ -19,7 +19,8 @@ import kotlinx.android.synthetic.main.fragment_explorer.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class ExplorerFragment : Fragment(), ExplorerAdapter.OnItemClickListener {
-    private val viewModel by sharedViewModel<FileFolderViewModel>()
+    private val newViewModel by sharedViewModel<FileFolderViewModel>()
+    var viewModel : FileFolderViewModel? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,16 +32,24 @@ class ExplorerFragment : Fragment(), ExplorerAdapter.OnItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (DeletionActivity.fileFolderViewModel != null) {
+            viewModel = DeletionActivity.fileFolderViewModel!!
+        } else {
+            viewModel = newViewModel
+            DeletionActivity.fileFolderViewModel = viewModel
+        }
+
         DeletionActivity.fileFolderViewModel = viewModel
 
-        val adapter = ExplorerAdapter(this, viewModel)
+        val adapter = ExplorerAdapter(this, viewModel!!)
 
         fragment_explorer_recyclerview.layoutManager = LinearLayoutManager(requireContext())
         fragment_explorer_recyclerview.adapter = adapter
 
-        viewModel.populate(AnalyticsFragment.selectedPath)
+        viewModel?.populate(AnalyticsFragment.selectedPath)
 
-        viewModel.liveFileFolderData.observe(this, Observer {
+        viewModel?.liveFileFolderData?.observe(this, Observer {
             fflist ->
             adapter.update(fflist)
         })
@@ -52,10 +61,10 @@ class ExplorerFragment : Fragment(), ExplorerAdapter.OnItemClickListener {
         this.view!!.setOnKeyListener { view: View, i: Int, keyEvent: KeyEvent ->
             dual = !dual
             if (dual && i == KeyEvent.KEYCODE_BACK) {
-                if (viewModel.currPath == AnalyticsFragment.selectedPath) {
+                if (viewModel?.currPath == AnalyticsFragment.selectedPath) {
                     startActivity(Intent(requireContext(), MainActivity::class.java))
                 } else {
-                    viewModel.goToParent()
+                    viewModel?.goToParent()
                 }
             }
             i == KeyEvent.KEYCODE_BACK
@@ -63,7 +72,7 @@ class ExplorerFragment : Fragment(), ExplorerAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(fileFolder: FileFolder) {
-        viewModel.populate(fileFolder.path)
+        viewModel?.populate(fileFolder.path)
     }
 
 }

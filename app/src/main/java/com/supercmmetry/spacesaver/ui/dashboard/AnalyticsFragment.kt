@@ -1,5 +1,6 @@
 package com.supercmmetry.spacesaver.ui.dashboard
 
+import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -17,15 +18,16 @@ import com.supercmmetry.spacesaver.data.FileFolder
 import com.supercmmetry.spacesaver.ui.explorer.ExplorerActivity
 import com.supercmmetry.spacesaver.ui.explorer.FileFolderViewModel
 import kotlinx.android.synthetic.main.fragment_analytics.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
-
 
 
 class AnalyticsFragment : Fragment(), AnalyticsAdapter.OnItemClickListener {
     private val viewModel by sharedViewModel<AnalyticsViewModel>()
 
     companion object {
-        var selectedPath : String = ""
+        var selectedPath: String = ""
     }
 
     override fun onCreateView(
@@ -40,12 +42,12 @@ class AnalyticsFragment : Fragment(), AnalyticsAdapter.OnItemClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         val adapter = AnalyticsAdapter(this)
-        
+
         fragment_analytics_recyclerview.layoutManager = LinearLayoutManager(requireContext())
         fragment_analytics_recyclerview.adapter = adapter
 
-        viewModel.liveAnalytics.observe(this, Observer {
-            analytics -> adapter.update(analytics)
+        viewModel.liveAnalytics.observe(this, Observer { analytics ->
+            adapter.update(analytics)
         })
 
     }
